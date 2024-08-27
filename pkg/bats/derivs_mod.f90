@@ -13,7 +13,7 @@ contains
     use const, only : c0,c1,SecPerDay
     use eco_common, only : rlt,wnsvflag
     use eco_params, only : iae, imu_SP,ialpha_SP,ia_SP,iv_SPn,ik_nh4SP,ik_no3SP,&
-          iv_SPp,ik_po4SP,izeta,itheta, ir_excrSP_1,ir_excrSP_2,ir_pomSP,imu_TR,ialpha_TR,ia_TR,&
+          iv_SPp,ik_po4SP,izeta,ichlgrowth, ir_excrSP_1,ir_excrSP_2,ir_pomSP,imu_TR,ialpha_TR,ia_TR,&
           iv_TRn,ik_nh4TR,ik_no3TR,iv_TRp,ik_po4TR,imu_pickTRpo4, izeta_nf,&
           ir_excrTR_1,ir_excrTR_n,ir_excrTR_2,ir_pomTR,imu_UN,&
           ialpha_UN,ir_SDOM,ik_DOM,imu_BA,& !ib_SDONlabi,ib_SDOPlabi,
@@ -111,7 +111,7 @@ contains
 ! ecosystem model parameters
     double precision :: temp,temp1
     double precision :: ae,mu_SP,alpha_SP,a_SP,v_SPn,k_nh4SP,k_no3SP,&
-      v_SPp,k_po4SP, zeta, theta, r_excrSP_1,r_excrSP_2,r_pomSP,&
+      v_SPp,k_po4SP, zeta, chlgrowth, r_excrSP_1,r_excrSP_2,r_pomSP,&
       mu_TR,alpha_TR,a_TR,k_nh4TR,v_TRn,k_no3TR,&
       v_TRp, k_po4TR,mu_pickTRpo4, zeta_nf, &
       r_excrTR_1,r_excrTR_n,r_excrTR_2,r_pomTR,&
@@ -205,7 +205,7 @@ contains
     v_SPp           = bioparams(iv_SPp       )
     k_po4SP        = bioparams(ik_po4SP        )
     zeta              = bioparams(izeta       )
-    theta            = bioparams(itheta       )
+    chlgrowth            = bioparams(ichlgrowth       )
     r_excrSP_1     = bioparams(ir_excrSP_1     )
     r_excrSP_2     = bioparams(ir_excrSP_2     )
     r_pomSP        = bioparams(ir_pomSP        )
@@ -382,7 +382,7 @@ contains
 
     ! Chlorophyll
     IF (rlt .gt. c0) THEN
-        growSPchl = theta * growSPn * &
+        growSPchl = chlgrowth * growSPn * &
                         growSPc / (alpha_SP*y(iSPchl)*rlt*exp(-a_SP*rlt)) 
     ELSE
         growSPchl = c0
@@ -474,7 +474,7 @@ contains
     respTR = growTRno3 *  zeta + growTRnf * zeta_nf
     ! Chlorophyll
     IF (rlt .gt. c0) THEN
-        growTRchl = theta * growTRn * &
+        growTRchl = chlgrowth * growTRn * &
                         growTRc / (alpha_TR*y(iTRchl)*rlt*exp(-a_TR*rlt)) 
     ELSE
         growTRchl = c0
@@ -564,7 +564,7 @@ contains
     respUN = growUNno3 *  zeta + growUNnf * zeta_nf 
      ! Chlorophyll
     IF (rlt .gt. c0) THEN
-        growUNchl = theta * growUNn * &
+        growUNchl = chlgrowth * growUNn * &
                         growUNc / (alpha_UN*y(iUNchl)*rlt*exp(-a_UN*rlt)) 
     ELSE
         growUNchl = c0

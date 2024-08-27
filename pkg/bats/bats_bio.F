@@ -152,7 +152,7 @@ C
       double precision :: temp,temp1
       double precision :: ae,mu_SP,alpha_SP,a_SP,v_SPn,k_nh4SP,k_no3SP
       double precision :: v_SPp,k_po4SP, zeta, theta_eco, r_excrSP_1
-      double precision :: r_excrSP_2,r_pomSP
+      double precision :: r_excrSP_2,r_pomSP, chlgrowth
       double precision :: mu_TR,alpha_TR,a_TR,k_nh4TR,v_TRn,k_no3TR
       double precision :: v_TRp, k_po4TR,mu_pickTRpo4, zeta_nf
       double precision :: r_excrTR_1,r_excrTR_n,r_excrTR_2,r_pomTR
@@ -334,8 +334,8 @@ C indices for diagnostic variables
 !    &     iv_SPp            = ik_no3SP        + 1,
 !    &     ik_po4SP        = iv_SPp        + 1,
 !    &     izeta               = ik_po4SP     + 1,
-!    &     itheta             = izeta        + 1,
-!    &     ir_excrSP_1     = itheta        + 1,
+!    &     ichlgrowth             = izeta        + 1,
+!    &     ir_excrSP_1     = ichlgrowth        + 1,
 !    &     ir_excrSP_2     = ir_excrSP_1     + 1,
 !    &     ir_pomSP        = ir_excrSP_2     + 1,
 !    &     imu_TR          = ir_pomSP        + 1,
@@ -417,7 +417,7 @@ C indices for diagnostic variables
 !      v_SPp           = bioparams(iv_SPp       )
 !      k_po4SP        = bioparams(ik_po4SP        )
 !      zeta              = bioparams(izeta       )
-!      theta_eco            = bioparams(itheta       )
+!      theta_eco            = bioparams(ichlgrowth       )
 !      r_excrSP_1     = bioparams(ir_excrSP_1     )
 !      r_excrSP_2     = bioparams(ir_excrSP_2     )
 !      r_pomSP        = bioparams(ir_pomSP        )
@@ -545,7 +545,7 @@ C indices for diagnostic variables
        V_SPP = 0.02 !Luo
        K_PO4SP = 0.0048 !Luo
        ZETA = 2.0 !Luo
-       THETA = 2.5 !Luo
+       CHLGROWTH = 2.5 !Luo
        R_EXCRSP_1 = 0.5
        R_EXCRSP_2 = 0.5
        R_POMSP = 0.5 !Luo
@@ -646,10 +646,10 @@ c  Nutrient uptake and partitioning between organic pools
 
          IF (hFacC(i,j,k,bi,bj) .gt. 0. _d 0) THEN
 
-            Tref_eco = 25.d0 ! Reference Temperature for Function of Temperatue Effects
+            Tref_eco = 25 ! Reference Temperature for Function of Temperatue Effects
             ! Temperature Effects
-            Tfunc = exp(-ae*( 1/theta(i,j,k,bi,bj)
-     &              +273.15)-1/(Tref_eco+273.15))
+            Tfunc = exp(-ae * (1/theta(i,j,k,bi,bj) 
+     &           + 273.15) - 1/(Tref_eco+273.15))
             mu_SP = mu_SP * Tfunc
             v_SPn = v_SPn * Tfunc
             v_SPp = v_SPp * Tfunc
