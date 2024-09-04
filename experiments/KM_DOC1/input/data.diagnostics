@@ -30,6 +30,7 @@
  fields(1:6,1) =   'THETA   ', 'SALT    ', 'VVEL    ', 'UVEL    ',
                    'WVEL    ', 'CONVADJ ',
  frequency(1) = 43200.,
+
  filename(1) = 'state',
 
 # Heat budget terms

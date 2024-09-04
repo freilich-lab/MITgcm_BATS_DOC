@@ -109,7 +109,7 @@ contains
 !     Local variables
 !-----------------------------------------------------------------------
 ! ecosystem model parameters
-    double precision :: temp,temp1
+    double precision :: temp_bats,temp1
     double precision :: ae,mu_SP,alpha_SP,a_SP,v_SPn,k_nh4SP,k_no3SP,&
       v_SPp,k_po4SP, zeta, chlgrowth, r_excrSP_1,r_excrSP_2,r_pomSP,&
       mu_TR,alpha_TR,a_TR,k_nh4TR,v_TRn,k_no3TR,&
@@ -352,10 +352,10 @@ contains
                               (q_SP_rdf_n - q_SP_min_n) 
     Nfunc_sp_p = (y(iSPp)/y(iSPc) - q_SP_min_p) / &
                               (q_SP_rdf_p - q_SP_min_p) 
-    temp = min(Nfunc_sp_n, Nfunc_sp_p)
-    temp = min(temp, c1)
-    temp = max(temp, c0)
-    Pc_SPmax = mu_SP * temp
+    temp_bats = min(Nfunc_sp_n, Nfunc_sp_p)
+    temp_bats = min(temp_bats, c1)
+    temp_bats = max(temp_bats, c0)
+    Pc_SPmax = mu_SP * temp_bats
     ! Light Limitation
     IF ((Pc_SPmax.gt.c0).and.(y(iSPc).gt.c0)) THEN
         growSPc = y(iSPc) * Pc_SPmax * (c1 - exp(-alpha_SP*y(iSPchl)/y(iSPc)*rlt/Pc_SPmax)) &
@@ -392,12 +392,12 @@ contains
     excrSP_1c = r_excrSP_1 * y(iSPc) + r_excrSP_2 * growSPc * 0.75 ! Passive
     excrSP_1n = r_excrSP_1 * y(iSPn)
     excrSP_1p = r_excrSP_1 * y(iSPp)
-    temp = MAX(c1-y(iSPn)/y(iSPc)/q_SP_rdf_n, c1-y(iSPp)/y(iSPc)/q_SP_rdf_p)
-    excrSP_2c = 0.5 * y(iSPc) * MAX(temp,c0)
+    temp_bats = MAX(c1-y(iSPn)/y(iSPc)/q_SP_rdf_n, c1-y(iSPp)/y(iSPc)/q_SP_rdf_p)
+    excrSP_2c = 0.5 * y(iSPc) * MAX(temp_bats,c0)
     IF (excrSP_2c > c0) THEN 
-        temp = MAX(c0, c1 - y(iSPp)/y(iSPn) / (q_SP_rdf_p/q_SP_rdf_n))
+        temp_bats = MAX(c0, c1 - y(iSPp)/y(iSPn) / (q_SP_rdf_p/q_SP_rdf_n))
         temp1 = MAX(c0, c1 - y(iSPn)/y(iSPp) / (q_SP_rdf_n/q_SP_rdf_p))
-        excrSP_2n = 0.5 * MIN(0.25d0 * y(iSPn) * temp, excrSP_2c * q_SP_rdf_n) 
+        excrSP_2n = 0.5 * MIN(0.25d0 * y(iSPn) * temp_bats, excrSP_2c * q_SP_rdf_n)
         excrSP_2p = 0.5 * MIN(0.25d0 * y(iSPp) * temp1, excrSP_2c * q_SP_rdf_p) 
     ELSE
         excrSP_2n = c0
@@ -433,10 +433,10 @@ contains
                               (q_TR_rdf_n - q_TR_min_n) 
     Nfunc_tr_p = (y(iTRp)/y(iTRc) - q_TR_min_p) / &
                               (q_TR_rdf_p - q_TR_min_p) 
-    temp = min(Nfunc_tr_n, Nfunc_tr_p)
-    temp = min(temp, c1)
-    temp = max(temp, c0)
-    Pc_TRmax = mu_TR * temp
+    temp_bats = min(Nfunc_tr_n, Nfunc_tr_p)
+    temp_bats = min(temp_bats, c1)
+    temp_bats = max(temp_bats, c0)
+    Pc_TRmax = mu_TR * temp_bats
      ! Light Limitation
     IF ((Pc_TRmax.gt.c0).and.(y(iTRc).gt.c0)) THEN 
         growTRc = y(iTRc) * Pc_TRmax * (c1 - exp(-alpha_TR*y(iTRchl)/y(iTRc)*rlt/Pc_TRmax)) &
@@ -486,12 +486,12 @@ contains
     excrTR_1p = r_excrTR_1 * y(iTRp)
     excrTR_nh4 = 0.5* r_excrTR_n * growTRnf * min(c1, Nfunc_tr_n)
     
-    temp = MAX(c1-y(iTRn)/y(iTRc)/q_TR_rdf_n, c1-y(iTRp)/y(iTRc)/q_TR_rdf_p)
-    excrTR_2c = r_excrTR_2 * y(iTRc) * MAX(temp, c0)
+    temp_bats = MAX(c1-y(iTRn)/y(iTRc)/q_TR_rdf_n, c1-y(iTRp)/y(iTRc)/q_TR_rdf_p)
+    excrTR_2c = r_excrTR_2 * y(iTRc) * MAX(temp_bats, c0)
     IF (excrTR_2c > c0) THEN 
-        temp = MAX(c0, c1 - y(iTRp)/y(iTRn) / (q_TR_rdf_p/q_TR_rdf_n))
+        temp_bats = MAX(c0, c1 - y(iTRp)/y(iTRn) / (q_TR_rdf_p/q_TR_rdf_n))
         temp1 = MAX(c0, c1 - y(iTRn)/y(iTRp) / (q_TR_rdf_n/q_TR_rdf_p))
-        excrTR_2n = r_excrTR_2 * MIN(0.25d0 * y(iTRn) * temp, excrTR_2c * q_TR_rdf_n) 
+        excrTR_2n = r_excrTR_2 * MIN(0.25d0 * y(iTRn) * temp_bats, excrTR_2c * q_TR_rdf_n)
         excrTR_2p = r_excrTR_2 * MIN(0.25d0 * y(iTRp) * temp1, excrTR_2c * q_TR_rdf_p) 
     ELSE
         excrTR_2n = c0
@@ -528,10 +528,10 @@ contains
                               (q_UN_rdf_n - q_UN_min_n) 
     Nfunc_un_p = (y(iUNp)/y(iUNc) - q_UN_min_p) / &
                               (q_UN_rdf_p - q_UN_min_p) 
-    temp = min(Nfunc_un_n, Nfunc_un_p)
-    temp = min(temp, c1)
-    temp = max(temp, c0)
-    Pc_UNmax = mu_UN * temp
+    temp_bats = min(Nfunc_un_n, Nfunc_un_p)
+    temp_bats = min(temp_bats, c1)
+    temp_bats = max(temp_bats, c0)
+    Pc_UNmax = mu_UN * temp_bats
      ! Light Limitation
      IF ((Pc_UNmax.gt.c0).and.(y(iUNc).gt.c0)) THEN 
         growUNc = y(iUNc) * Pc_UNmax * (c1 - exp(-alpha_UN*y(iUNchl)/y(iUNc)*rlt/Pc_UNmax)) &
@@ -576,12 +576,12 @@ contains
     excrUN_1p = r_excrUN_1 * y(iUNp)
     excrUN_nh4 = 0.5 * r_excrUN_n * growUNnf * min(c1, Nfunc_un_n)
     
-    temp = MAX(c1-y(iUNn)/y(iUNc)/q_UN_rdf_n, c1-y(iUNp)/y(iUNc)/q_UN_rdf_p)
-    excrUN_2c = r_excrUN_2 * y(iUNc) * MAX(temp,c0)
+    temp_bats = MAX(c1-y(iUNn)/y(iUNc)/q_UN_rdf_n, c1-y(iUNp)/y(iUNc)/q_UN_rdf_p)
+    excrUN_2c = r_excrUN_2 * y(iUNc) * MAX(temp_bats,c0)
     IF (excrUN_2c > c0) THEN 
-        temp = MAX(c0, c1 - y(iUNp)/y(iUNn) / (q_UN_rdf_p/q_UN_rdf_n))
+        temp_bats = MAX(c0, c1 - y(iUNp)/y(iUNn) / (q_UN_rdf_p/q_UN_rdf_n))
         temp1 = MAX(c0, c1 - y(iUNn)/y(iUNp) / (q_UN_rdf_n/q_UN_rdf_p))
-        excrUN_2n = r_excrUN_2 * MIN(0.25d0 * y(iUNn) * temp, excrUN_2c * q_UN_rdf_n) 
+        excrUN_2n = r_excrUN_2 * MIN(0.25d0 * y(iUNn) * temp_bats, excrUN_2c * q_UN_rdf_n)
         excrUN_2p = r_excrUN_2 * MIN(0.25d0 * y(iUNp) * temp1, excrUN_2c * q_UN_rdf_p) 
     ELSE
         excrUN_2n = c0
@@ -615,17 +615,17 @@ contains
     ! 1. Gross Grow
     ! Maximum possible C amount for bacterial use
     ALC = y(iLDOMc)
-    !temp = MIN(c1, exp(b_SDONlabi * (y(iSDOMn)/y(iSDOMc)/q_BA_n - c1)) )
-    !temp = MIN(temp, exp(b_SDOPlabi * (y(iSDOMp)/y(iSDOMc)/q_BA_p - c1)) )
+    !temp_bats = MIN(c1, exp(b_SDONlabi * (y(iSDOMn)/y(iSDOMc)/q_BA_n - c1)) )
+    !temp_bats = MIN(temp_bats, exp(b_SDOPlabi * (y(iSDOMp)/y(iSDOMc)/q_BA_p - c1)) )
     ASC = y(iSDOMc) * r_SDOM
     ! Carbon Usage
     Nfunc_ba_n = y(iBAn)/y(iBAc)/q_BA_n
     Nfunc_ba_p = y(iBAp)/y(iBAc)/q_BA_p
-    temp = min(Nfunc_ba_n, Nfunc_ba_p)
-    temp = min(temp, c1)
-    growBAldoc = mu_BA * y(iBAc) * temp * ALC &
+    temp_bats = min(Nfunc_ba_n, Nfunc_ba_p)
+    temp_bats = min(temp_bats, c1)
+    growBAldoc = mu_BA * y(iBAc) * temp_bats * ALC &
                           / (ALC+ k_DOM + ASC) 
-    growBAsdoc = mu_BA * y(iBAc) * temp * ASC &
+    growBAsdoc = mu_BA * y(iBAc) * temp_bats * ASC &
                           / (ASC+ k_DOM + ALC)
     growBApoc  = mu_BA * y(iBAc) * y(iDETc) &
                   / ( y(iDETc) + k_POM * y(iBAc) ) ! particle-attached bacteria
@@ -726,9 +726,9 @@ contains
     ! 3. respiration
     respPRT = r_PRTresp_1 * y(iPRTc) + r_PRTresp_2 * growPRTc
     ! 4. adjust body stoichiometry by excreting semi-labile DOM
-    temp = MAX(c1 - y(iPRTn)/y(iPRTc)/q_PRT_n, c1 - y(iPRTp)/y(iPRTc)/q_PRT_p)
-    temp = MAX(c0, temp)
-    excrPRTsdom2c = r_PRTadju * y(iPRTc) * temp
+    temp_bats = MAX(c1 - y(iPRTn)/y(iPRTc)/q_PRT_n, c1 - y(iPRTp)/y(iPRTc)/q_PRT_p)
+    temp_bats = MAX(c0, temp_bats)
+    excrPRTsdom2c = r_PRTadju * y(iPRTc) * temp_bats
     excrPRTsdom2n = 0.5d0*excrPRTsdom2c * y(iPRTn)/y(iPRTc)
     excrPRTsdom2p = 0.5d0*excrPRTsdom2c * y(iPRTp)/y(iPRTc)
     ! 5. adjust body stoichiometry by remineralizing inorganic nutrients
@@ -785,9 +785,9 @@ contains
     ! 3. respiration
     respMZ = r_MZresp_1 * y(iMZc) + r_MZresp_2 * growMZc
     ! 4. adjust body stoichiometry by excreting semi-labile DOM
-    temp = MAX(c1 - y(iMZn)/y(iMZc)/q_MZ_n, c1 - y(iMZp)/y(iMZc)/q_MZ_p)
-    temp = MAx(temp, c0)
-    excrMZsdom2c = r_MZadju * y(iMZc) * temp
+    temp_bats = MAX(c1 - y(iMZn)/y(iMZc)/q_MZ_n, c1 - y(iMZp)/y(iMZc)/q_MZ_p)
+    temp_bats = MAx(temp_bats, c0)
+    excrMZsdom2c = r_MZadju * y(iMZc) * temp_bats
     excrMZsdom2n = excrMZsdom2c * y(iMZn)/y(iMZc)*0.5d0
     excrMZsdom2p = excrMZsdom2c * y(iMZp)/y(iMZc)*0.5d0
     ! 5. adjust body stoichiometry by remineralizing inorganic nutrients
@@ -852,13 +852,13 @@ contains
     !-----------------------------------------------------------------------
     !      Dissolved Organic Matter (DOM) Processes
     !-----------------------------------------------------------------------
-    temp = MIN(y(iSDOMn)/y(iSDOMc)/q_refrDOM_n, y(iSDOMp)/y(iSDOMc)/q_refrDOM_p)
-    refrSDOMc = r_SDOMrefr * y(iSDOMc) * EXP(c1 - temp)
+    temp_bats = MIN(y(iSDOMn)/y(iSDOMc)/q_refrDOM_n, y(iSDOMp)/y(iSDOMc)/q_refrDOM_p)
+    refrSDOMc = r_SDOMrefr * y(iSDOMc) * EXP(c1 - temp_bats)
     refrSDOMn = refrSDOMc * q_refrDOM_n
     refrSDOMp = refrSDOMc * q_refrDOM_p
-    temp = MAX(y(iSDOMc)-y(iSDOMn)/q_refrDOM_n, y(iSDOMc)-y(iSDOMp)/q_refrDOM_p)
-    temp = MAX(temp, c0)
-    refrSDOMc = refrSDOMc + temp
+    temp_bats = MAX(y(iSDOMc)-y(iSDOMn)/q_refrDOM_n, y(iSDOMc)-y(iSDOMp)/q_refrDOM_p)
+    temp_bats = MAX(temp_bats, c0)
+    refrSDOMc = refrSDOMc + temp_bats
     dydtt(iLDOMc) = (excrSP_1c + excrTR_1c + excrUN_1c + excrPRTldomc &
                      + excrMZldomc - growBAldoc + mortBAc)/ SecPerDay
     dydtt(iLDOMn) = (excrSP_1n + excrTR_1n + excrUN_1n + excrPRTldomn &

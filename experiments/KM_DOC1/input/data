@@ -63,10 +63,11 @@
  &PARM03
  nIter0=0,
 # 3 months- 31104
- nTimeSteps=1244160,
+ nTimeSteps=31104,
  deltaT=250.0,
- pChkptFreq=31104000.0,
- chkptFreq=15552000.0,
+# deltaT=1.0,
+ pChkptFreq=647750.0,
+ chkptFreq=323875.0,
  dumpFreq=0,
 # change monitorFreq for a longer run
  monitorFreq=864000., 

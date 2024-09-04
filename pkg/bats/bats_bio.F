@@ -149,7 +149,7 @@ C
 !     Local variables
 !-----------------------------------------------------------------------
 ! ecosystem model parameters
-      double precision :: temp,temp1
+      double precision :: temp_bats,temp1
       double precision :: ae,mu_SP,alpha_SP,a_SP,v_SPn,k_nh4SP,k_no3SP
       double precision :: v_SPp,k_po4SP, zeta, theta_eco, r_excrSP_1
       double precision :: r_excrSP_2,r_pomSP, chlgrowth
@@ -672,10 +672,10 @@ c  M        icrophytoplankton processes
      &                   (q_SP_rdf_n - q_SP_min_n)
             Nfunc_sp_p = (PTR_SPP(i,j,k)/PTR_SPC(i,j,k) - q_SP_min_p)/
      &                   (q_SP_rdf_p - q_SP_min_p)
-            temp = min(Nfunc_sp_n, Nfunc_sp_p)
-            temp = min(temp, c1)
-            temp = max(temp, c0)
-            Pc_SPmax = mu_SP * temp
+            temp_bats = min(Nfunc_sp_n, Nfunc_sp_p)
+            temp_bats = min(temp_bats, c1)
+            temp_bats = max(temp_bats, c0)
+            Pc_SPmax = mu_SP * temp_bats
         
             ! Light Limitation
             IF ((Pc_SPmax.gt.c0).and.(PTR_SPC(i,j,k).gt.c0)) THEN
@@ -719,16 +719,16 @@ c  M        icrophytoplankton processes
      &                  growSPc * 0.75 !             Passive
             excrSP_1n = r_excrSP_1 * PTR_SPN(i,j,k)
             excrSP_1p = r_excrSP_1 * PTR_SPP(i,j,k)
-            temp = MAX(c1-PTR_SPN(i,j,k)/PTR_SPC(i,j,k)/
+            temp_bats = MAX(c1-PTR_SPN(i,j,k)/PTR_SPC(i,j,k)/
      &          q_SP_rdf_n,c1-PTR_SPP(i,j,k)/PTR_SPC(i,j,k)/q_SP_rdf_p)
-            excrSP_2c = 0.5 * PTR_SPC(i,j,k) * MAX(temp,c0)
+            excrSP_2c = 0.5 * PTR_SPC(i,j,k) * MAX(temp_bats,c0)
             IF (excrSP_2c > c0) THEN
-                temp = MAX(c0, c1 - PTR_SPP(i,j,k)/PTR_SPN(i,j,k)/
+                temp_bats = MAX(c0, c1 - PTR_SPP(i,j,k)/PTR_SPN(i,j,k)/
      &                 (q_SP_rdf_p/q_SP_rdf_n))
                 temp1 = MAX(c0, c1 - PTR_SPN(i,j,k)/PTR_SPP(i,j,k)/
      &                  (q_SP_rdf_n/q_SP_rdf_p))
-                excrSP_2n = 0.5 * MIN(0.25d0 * PTR_SPN(i,j,k) * temp,
-     &                      excrSP_2c*q_SP_rdf_n)
+                excrSP_2n = 0.5 * MIN(0.25d0 * PTR_SPN(i,j,k)
+     &                      * temp_bats, excrSP_2c*q_SP_rdf_n)
                 excrSP_2p = 0.5 * MIN(0.25d0 * PTR_SPP(i,j,k) * temp1,
      &                      excrSP_2c*q_SP_rdf_p)
             ELSE
@@ -770,10 +770,10 @@ c  M        icrophytoplankton processes
      &                                 (q_TR_rdf_n - q_TR_min_n)
             Nfunc_tr_p = (PTR_TRP(i,j,k)/PTR_TRC(i,j,k) - q_TR_min_p) / 
      &                                (q_TR_rdf_p - q_TR_min_p)
-            temp = min(Nfunc_tr_n, Nfunc_tr_p)
-            temp = min(temp, c1)
-            temp = max(temp, c0)
-            Pc_TRmax = mu_TR * temp
+            temp_bats = min(Nfunc_tr_n, Nfunc_tr_p)
+            temp_bats = min(temp_bats, c1)
+            temp_bats = max(temp_bats, c0)
+            Pc_TRmax = mu_TR * temp_bats
              ! Light Limitation
             IF ((Pc_TRmax.gt.c0).and.(PTR_TRC(i,j,k).gt.c0)) THEN
                 growTRc = PTR_TRC(i,j,k) * Pc_TRmax * (c1 -
@@ -834,16 +834,16 @@ c  M        icrophytoplankton processes
             excrTR_nh4 = 0.5* r_excrTR_n * growTRnf * 
      &                   min(c1, Nfunc_tr_n)
             
-            temp = MAX(c1-PTR_TRN(i,j,k)/PTR_TRC(i,j,k)/q_TR_rdf_n,
+            temp_bats = MAX(c1-PTR_TRN(i,j,k)/PTR_TRC(i,j,k)/q_TR_rdf_n,
      &             c1-PTR_TRP(i,j,k)/PTR_TRC(i,j,k)/q_TR_rdf_p)
-            excrTR_2c = r_excrTR_2 * PTR_TRC(i,j,k) * MAX(temp, c0)
+            excrTR_2c = r_excrTR_2 * PTR_TRC(i,j,k) * MAX(temp_bats, c0)
             IF (excrTR_2c > c0) THEN
-                temp = MAX(c0, c1 - PTR_TRP(i,j,k)/PTR_TRN(i,j,k)/
+                temp_bats = MAX(c0, c1 - PTR_TRP(i,j,k)/PTR_TRN(i,j,k)/
      &                 (q_TR_rdf_p/q_TR_rdf_n))
                 temp1 = MAX(c0, c1 - PTR_TRN(i,j,k)/PTR_TRP(i,j,k)/
      &                  (q_TR_rdf_n/q_TR_rdf_p))
                 excrTR_2n = r_excrTR_2 * MIN(0.25d0 * PTR_TRN(i,j,k) * 
-     &                      temp,excrTR_2c *   q_TR_rdf_n)
+     &                      temp_bats,excrTR_2c *   q_TR_rdf_n)
                 excrTR_2p = r_excrTR_2 * MIN(0.25d0 * PTR_TRP(i,j,k) * 
      &                      temp1,excrTR_2c *  q_TR_rdf_p)
             ELSE
@@ -884,10 +884,10 @@ c  M        icrophytoplankton processes
      &                                 (q_UN_rdf_n - q_UN_min_n)
             Nfunc_un_p = (PTR_UNP(i,j,k)/PTR_UNC(i,j,k) - q_UN_min_p) / 
      &                                 (q_UN_rdf_p - q_UN_min_p)
-            temp = min(Nfunc_un_n, Nfunc_un_p)
-            temp = min(temp, c1)
-            temp = max(temp, c0)
-            Pc_UNmax = mu_UN * temp
+            temp_bats = min(Nfunc_un_n, Nfunc_un_p)
+            temp_bats = min(temp_bats, c1)
+            temp_bats = max(temp_bats, c0)
+            Pc_UNmax = mu_UN * temp_bats
              ! Light Limitation
              IF ((Pc_UNmax.gt.c0).and.(PTR_UNC(i,j,k).gt.c0)) THEN
                 growUNc = PTR_UNC(i,j,k) * Pc_UNmax * (c1 - 
@@ -941,16 +941,16 @@ c  M        icrophytoplankton processes
             excrUN_1p = r_excrUN_1 * PTR_UNP(i,j,k)
             excrUN_nh4 = 0.5*r_excrUN_n*growUNnf * min(c1, Nfunc_un_n)
             
-            temp = MAX(c1-PTR_UNN(i,j,k)/PTR_UNC(i,j,k)/q_UN_rdf_n,
+            temp_bats = MAX(c1-PTR_UNN(i,j,k)/PTR_UNC(i,j,k)/q_UN_rdf_n,
      &             c1-PTR_UNP(i,j,k)/PTR_UNC(i,j,k)/q_UN_rdf_p)
-            excrUN_2c = r_excrUN_2 * PTR_UNC(i,j,k) * MAX(temp,c0)
+            excrUN_2c = r_excrUN_2 * PTR_UNC(i,j,k) * MAX(temp_bats,c0)
             IF (excrUN_2c > c0) THEN
-                temp = MAX(c0, c1 - PTR_UNP(i,j,k)/PTR_UNN(i,j,k) / 
+                temp_bats = MAX(c0, c1 - PTR_UNP(i,j,k)/PTR_UNN(i,j,k) /
      &                 (q_UN_rdf_p/q_UN_rdf_n))
                 temp1 = MAX(c0, c1 - PTR_UNN(i,j,k)/PTR_UNP(i,j,k) /
      &                 (q_UN_rdf_n/q_UN_rdf_p))
                 excrUN_2n = r_excrUN_2 * MIN(0.25d0 * PTR_UNN(i,j,k) * 
-     &                 temp, excrUN_2c  * q_UN_rdf_n)
+     &                 temp_bats, excrUN_2c  * q_UN_rdf_n)
                 excrUN_2p = r_excrUN_2 * MIN(0.25d0 * PTR_UNP(i,j,k) * 
      &                 temp1,excrUN_2c     * q_UN_rdf_p)
             ELSE
@@ -989,17 +989,17 @@ c  M        icrophytoplankton processes
             ! 1. Gross Grow
             ! Maximum possible C amount for bacterial use
             ALC = PTR_DOC(i,j,k)
-            !temp = MIN(c1, exp(b_SDONlabi *         (PTR_SDON(i,j,k)/PTR_SDOC(i,j,k)/q_BA_n - c1)) )
-            !temp = MIN(temp, exp(b_SDOPlabi *         (PTR_SDOP(i,j,k)/PTR_SDOC(i,j,k)/q_BA_p - c1)) )
+            !temp_bats = MIN(c1, exp(b_SDONlabi *         (PTR_SDON(i,j,k)/PTR_SDOC(i,j,k)/q_BA_n - c1)) )
+            !temp_bats = MIN(temp_bats, exp(b_SDOPlabi *         (PTR_SDOP(i,j,k)/PTR_SDOC(i,j,k)/q_BA_p - c1)) )
             ASC = PTR_SDOC(i,j,k) * r_SDOM
             ! Carbon Usage
             Nfunc_ba_n = PTR_BAN(i,j,k)/PTR_BAC(i,j,k)/q_BA_n
             Nfunc_ba_p = PTR_BAP(i,j,k)/PTR_BAC(i,j,k)/q_BA_p
-            temp = min(Nfunc_ba_n, Nfunc_ba_p)
-            temp = min(temp, c1)
-            growBAldoc = mu_BA * PTR_BAC(i,j,k) * temp * ALC
+            temp_bats = min(Nfunc_ba_n, Nfunc_ba_p)
+            temp_bats = min(temp_bats, c1)
+            growBAldoc = mu_BA * PTR_BAC(i,j,k) * temp_bats * ALC
      &                          / (ALC+ k_DOM + ASC)
-            growBAsdoc = mu_BA * PTR_BAC(i,j,k) * temp * ASC
+            growBAsdoc = mu_BA * PTR_BAC(i,j,k) * temp_bats * ASC
      &                              / (ASC+ k_DOM + ALC)
             growBApoc  = mu_BA * PTR_BAC(i,j,k) * PTR_DETC(i,j,k)
      &                    / ( PTR_DETC(i,j,k) + k_POM * PTR_BAC(i,j,k) ) !          particle-attached bacteria
@@ -1117,10 +1117,11 @@ c  M        icrophytoplankton processes
             respPRT = r_PRTresp_1 * PTR_PRTC(i,j,k) + 
      &                 r_PRTresp_2 * growPRTc
             ! 4. adjust body stoichiometry by excreting semi-labile DOM
-            temp = MAX(c1 - PTR_PRTN(i,j,k)/PTR_PRTC(i,j,k)/q_PRT_n, 
-     &                  c1 - PTR_PRTP(i,j,k)/PTR_PRTC(i,j,k)/q_PRT_p)
-            temp = MAX(c0, temp)
-            excrPRTsdom2c = r_PRTadju * PTR_PRTC(i,j,k) * temp
+            temp_bats = MAX(c1 - PTR_PRTN(i,j,k)/PTR_PRTC(i,j,k)
+     &                  /q_PRT_n, c1
+     &                  - PTR_PRTP(i,j,k)/PTR_PRTC(i,j,k)/q_PRT_p)
+            temp_bats = MAX(c0, temp_bats)
+            excrPRTsdom2c = r_PRTadju * PTR_PRTC(i,j,k) * temp_bats
             excrPRTsdom2n = 0.5d0*excrPRTsdom2c * 
      &                            PTR_PRTN(i,j,k)/PTR_PRTC(i,j,k)
             excrPRTsdom2p = 0.5d0*excrPRTsdom2c * 
@@ -1191,10 +1192,10 @@ c  M        icrophytoplankton processes
             ! 3. respiration
             respMZ = r_MZresp_1 * PTR_MZC(i,j,k) + r_MZresp_2 * growMZc
             ! 4. adjust body stoichiometry by excreting semi-labile DOM
-            temp = MAX(c1 - PTR_MZN(i,j,k)/PTR_MZC(i,j,k)/q_MZ_n, c1 - 
-     &              PTR_MZP(i,j,k)/PTR_MZC(i,j,k)/q_MZ_p)
-            temp = MAx(temp, c0)
-            excrMZsdom2c = r_MZadju * PTR_MZC(i,j,k) * temp
+            temp_bats = MAX(c1 - PTR_MZN(i,j,k)/PTR_MZC(i,j,k)/q_MZ_n,
+     &              c1 - PTR_MZP(i,j,k)/PTR_MZC(i,j,k)/q_MZ_p)
+            temp_bats = MAx(temp_bats, c0)
+            excrMZsdom2c = r_MZadju * PTR_MZC(i,j,k) * temp_bats
             excrMZsdom2n= excrMZsdom2c * PTR_MZN(i,j,k)/PTR_MZC(i,j,k)*0.5d0
             excrMZsdom2p= excrMZsdom2c * PTR_MZP(i,j,k)/PTR_MZC(i,j,k)*0.5d0
             ! 5. adjust body stoichiometry by remineralizing inorganic nutrients
@@ -1272,15 +1273,16 @@ c  M        icrophytoplankton processes
             !-----------------------------------------------------------------------
             !      Dissolved Organic Matter (DOM) Processes
             !-----------------------------------------------------------------------
-            temp = MIN(PTR_SDON(i,j,k)/PTR_SDOC(i,j,k)/q_refrDOM_n,         
+            temp_bats = MIN(PTR_SDON(i,j,k)/PTR_SDOC(i,j,k)/q_refrDOM_n,
      &             PTR_SDOP(i,j,k)/PTR_SDOC(i,j,k)/q_refrDOM_p)
-            refrSDOMc = r_SDOMrefr * PTR_SDOC(i,j,k) * EXP(c1 - temp)
+            refrSDOMc = r_SDOMrefr * PTR_SDOC(i,j,k) * EXP(c1
+     &             - temp_bats)
             refrSDOMn = refrSDOMc * q_refrDOM_n
             refrSDOMp = refrSDOMc * q_refrDOM_p
-            temp = MAX(PTR_SDOC(i,j,k)-PTR_SDON(i,j,k)/q_refrDOM_n,
+            temp_bats = MAX(PTR_SDOC(i,j,k)-PTR_SDON(i,j,k)/q_refrDOM_n,
      &             PTR_SDOC(i,j,k)-PTR_SDOP(i,j,k)/q_refrDOM_p)
-            temp = MAX(temp, c0)
-            refrSDOMc = refrSDOMc + temp
+            temp_bats = MAX(temp_bats, c0)
+            refrSDOMc = refrSDOMc + temp_bats
             G_DOC(i,j,k)=(excrSP_1c+excrTR_1c+excrUN_1c+excrPRTldomc
      &                     +excrMZldomc-growBAldoc+mortBAc)/SecPerDay
             G_DON(i,j,k)=(excrSP_1n+excrTR_1n+excrUN_1n+excrPRTldomn

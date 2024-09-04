@@ -114,7 +114,7 @@ contains
     
     character(len=256) :: fname
     
-     integer:: iz,isv,it,itemp
+     integer:: iz,isv,it,itemp_bats
     
     integer, parameter :: iun=30
 
@@ -149,7 +149,7 @@ contains
              END IF
              open(unit=iun,file=fname,status='old')
              do it=1,nt_glob(isite)
-	     do itemp = 1,nint(delt/1800)
+	     do itemp_bats = 1,nint(delt/1800)
                 read(iun,*)(horiz_adv(iz,isv,it),iz=1,nz_glob(isite))
              enddo
 	     enddo
@@ -275,7 +275,7 @@ contains
     integer :: isv,it,ised,ised_loc,idat
 
 ! TAMC - needed for summations
-    integer :: it2, it_temp
+    integer :: it2, it_temp_bats
 
     integer :: &
          ntsperday      , & ! number of timesteps per day
@@ -314,9 +314,9 @@ contains
     do idat = 1,ndat(xcppr)
         do it = time_cdat(xcppr,idat)-ntsperhalfday, &
                     time_cdat(xcppr,idat)-ntsperhalfday+ntsperday-1
-                   it_temp = it
+                   it_temp_bats = it
                    cpred(xcppr, idat) =  cpred(xcppr, idat) &
-                   + diag(z_cdat(xcppr, idat),iPP,it_temp)
+                   + diag(z_cdat(xcppr, idat),iPP,it_temp_bats)
         enddo 
     enddo
     cpred(xcppr,:) = cpred(xcppr,:) * secperday / ntsperday 
@@ -324,9 +324,9 @@ contains
     do idat = 1,ndat(xcbpr)
         do it = time_cdat(xcbpr,idat)-ntsperhalfday, &
                     time_cdat(xcbpr,idat)-ntsperhalfday+ntsperday-1
-                   it_temp = it
+                   it_temp_bats = it
                    cpred(xcbpr, idat) =  cpred(xcbpr, idat) &
-                       + diag(z_cdat(xcbpr, idat),iprBAc,it_temp)
+                       + diag(z_cdat(xcbpr, idat),iprBAc,it_temp_bats)
         enddo 
     enddo
     cpred(xcbpr,:) = cpred(xcbpr,:) * secperday / ntsperday 
@@ -334,9 +334,9 @@ contains
     do idat = 1,ndat(xcres)
         do it = time_cdat(xcres,idat)-ntsperhalfday, &
                     time_cdat(xcres,idat)-ntsperhalfday+ntsperday-1
-                   it_temp = it
+                   it_temp_bats = it
                    cpred(xcres, idat) =  cpred(xcres, idat) &
-                       + diag(z_cdat(xcres, idat),iHETres,it_temp)
+                       + diag(z_cdat(xcres, idat),iHETres,it_temp_bats)
         enddo
     enddo
     cpred(xcres,:) = cpred(xcres,:) * secperday / ntsperday
@@ -413,7 +413,7 @@ contains
        
     nsed_pred = 0
     do it=1,nt
-        it_temp = it
+        it_temp_bats = it
 ! for each export flux - determine contribution at trap
        do ised=1,ndat_sed(xcstc)
           ised_loc = nz+1
@@ -427,7 +427,7 @@ contains
           if ((t2trap .gt. btime_csed(xcstc,ised)) .and. &
                (t2trap .le. etime_csed(xcstc,ised))) then
              csed_pred(xcstc,ised) = csed_pred(xcstc,ised)+wnsv(iDETc)* &
-                  mwC*bio(ised_loc-1,iDETc,it_temp)* &
+                  mwC*bio(ised_loc-1,iDETc,it_temp_bats)* &
                   exp(-z2trap*bioparams(iremin)/wnsv(iDETc))
 !nsed_pred(ised) = nsed_pred(ised) + c1
              nsed_pred(ised) = nsed_pred(ised) + 1
@@ -443,7 +443,7 @@ contains
     
     nsed_pred = 0
     do it=1,nt
-       it_temp = it
+       it_temp_bats = it
 ! for each export flux - determine contribution at trap
        do ised=1,ndat_sed(xcstn)
           ised_loc = nz+1
@@ -457,7 +457,7 @@ contains
           if ((t2trap .gt. btime_csed(xcstn,ised)) .and. &
                (t2trap .le. etime_csed(xcstn,ised))) then
              csed_pred(xcstn,ised) = csed_pred(xcstn,ised)+wnsv(iDETn)* &
-                  mwN*bio(ised_loc-1,iDETn,it_temp)* &
+                  mwN*bio(ised_loc-1,iDETn,it_temp_bats)* &
                   exp(-z2trap*bioparams(iremin)*bioparams(iremin_prf_n)/wnsv(iDETn))
 !nsed_pred(ised) = nsed_pred(ised) + c1
              nsed_pred(ised) = nsed_pred(ised) + 1
@@ -473,7 +473,7 @@ contains
     
     nsed_pred = 0
     do it=1,nt
-       it_temp =it
+       it_temp_bats =it
 ! for each export flux - determine contribution at trap
        do ised=1,ndat_sed(xcstp)
           ised_loc = nz+1
@@ -487,7 +487,7 @@ contains
           if ((t2trap .gt. btime_csed(xcstp,ised)) .and. &
                (t2trap .le. etime_csed(xcstp,ised))) then
              csed_pred(xcstp,ised) = csed_pred(xcstp,ised)+wnsv(iDETp)* &
-                  mwP*bio(ised_loc-1,iDETp,it_temp)* &
+                  mwP*bio(ised_loc-1,iDETp,it_temp_bats)* &
                   exp(-z2trap*bioparams(iremin)*bioparams(iremin_prf_p)/wnsv(iDETp))
 !nsed_pred(ised) = nsed_pred(ised) + c1
              nsed_pred(ised) = nsed_pred(ised) + 1
